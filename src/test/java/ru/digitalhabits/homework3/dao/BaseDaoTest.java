@@ -13,9 +13,9 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class AbstractDaoTest<T extends BaseEntity<ID>, ID extends Serializable> {
+class BaseDaoTest<T extends BaseEntity<ID>, ID extends Serializable> {
 
-    private AbstractDao<T, ID> dao;
+    private BaseDao<T, ID> dao;
     private Class<T> entityClass;
     private Class<ID> idClass;
 
@@ -25,11 +25,11 @@ public abstract class AbstractDaoTest<T extends BaseEntity<ID>, ID extends Seria
     protected String notFoundMessage;
     protected Map<String, File> exampleFiles;
 
-    protected void setup(AbstractDao<T, ID> dao, Class<T> entityClass, Class<ID> idClass) {
+    protected void setup(BaseDao<T, ID> dao, Class<T> entityClass, Class<ID> idClass) {
         this.dao = dao;
         this.entityClass = entityClass;
         this.idClass = idClass;
-        this.notFoundMessage = String.format(AbstractDao.NOT_FOUND_MESSAGE_TEMPLATE, entityClass.getSimpleName());
+        this.notFoundMessage = String.format(BaseDao.NOT_FOUND_MESSAGE_TEMPLATE, entityClass.getSimpleName());
         this.exampleFiles = TestUtils.retrieveExampleFiles(entityClass.getSimpleName().toLowerCase(Locale.ROOT), "model");
     }
 

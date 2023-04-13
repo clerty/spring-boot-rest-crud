@@ -6,7 +6,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import ru.digitalhabits.homework3.dao.AbstractDao;
+import ru.digitalhabits.homework3.dao.BaseDao;
 import ru.digitalhabits.homework3.model.DepartmentFullResponse;
 import ru.digitalhabits.homework3.model.DepartmentRequest;
 import ru.digitalhabits.homework3.model.DepartmentShortResponse;
@@ -21,7 +21,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = DepartmentController.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class DepartmentControllerTest extends AbstractRestControllerTest<DepartmentRequest, DepartmentShortResponse, DepartmentFullResponse> {
+class DepartmentControllerTest extends BaseRestControllerTest<DepartmentRequest, DepartmentShortResponse, DepartmentFullResponse> {
+
+    static final int personId = 1;
+    static final int departmentId = 1;
 
     @MockBean
     private DepartmentService departmentService;
@@ -71,18 +74,13 @@ class DepartmentControllerTest extends AbstractRestControllerTest<DepartmentRequ
 
     @Test
     void addPersonToDepartment_bothExisting_noContent() throws Exception {
-        int departmentId = 1;
-        int personId = 1;
-
         this.mockMvc.perform(post(apiPath + "/{departmentId}/{personId}", departmentId, personId))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void addPersonToDepartment_nonExistingPerson_notFound() throws Exception {
-        int departmentId = 1;
-        int personId = 1;
-        String personNotFoundMessage = String.format(AbstractDao.NOT_FOUND_MESSAGE_TEMPLATE, "Person");
+        String personNotFoundMessage = String.format(BaseDao.NOT_FOUND_MESSAGE_TEMPLATE, "Person");
 
         willThrow(new EntityNotFoundException(personNotFoundMessage))
                 .given(personService)
@@ -95,9 +93,6 @@ class DepartmentControllerTest extends AbstractRestControllerTest<DepartmentRequ
 
     @Test
     void addPersonToDepartment_nonExistingDepartment_notFound() throws Exception {
-        int departmentId = 1;
-        int personId = 1;
-
         willThrow(new EntityNotFoundException(notFoundMessage))
                 .given(personService)
                 .addPersonToDepartment(departmentId, personId);
@@ -109,8 +104,6 @@ class DepartmentControllerTest extends AbstractRestControllerTest<DepartmentRequ
 
     @Test
     void addPersonToDepartment_closedDepartment_conflict() throws Exception {
-        int departmentId = 1;
-        int personId = 1;
         String illegalStateMessage = "Person could not be added to closed department";
 
         willThrow(new IllegalStateException(illegalStateMessage))
@@ -124,18 +117,12 @@ class DepartmentControllerTest extends AbstractRestControllerTest<DepartmentRequ
 
     @Test
     void removePersonFromDepartment_existing_noContent() throws Exception {
-        int departmentId = 1;
-        int personId = 1;
-
         this.mockMvc.perform(delete(apiPath + "/{departmentId}/{personId}", departmentId, personId))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void removePersonFromDepartment_nonExisting_notFound() throws Exception {
-        int departmentId = 1;
-        int personId = 1;
-
         willThrow(new EntityNotFoundException(notFoundMessage))
                 .given(personService)
                 .removePersonFromDepartment(departmentId, personId);
@@ -147,16 +134,12 @@ class DepartmentControllerTest extends AbstractRestControllerTest<DepartmentRequ
 
     @Test
     void closeDepartment_existing_noContent() throws Exception {
-        int id = 1;
-
         this.mockMvc.perform(post(apiPath + "/{id}/close", id))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void closeDepartment_nonExisting_notFound() throws Exception {
-        int id = 1;
-
         willThrow(new EntityNotFoundException(notFoundMessage))
                 .given(departmentService)
                 .close(id);

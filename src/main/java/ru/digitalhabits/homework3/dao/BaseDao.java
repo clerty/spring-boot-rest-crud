@@ -1,5 +1,8 @@
 package ru.digitalhabits.homework3.dao;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ru.digitalhabits.homework3.domain.BaseEntity;
 
 import javax.annotation.Nonnull;
@@ -8,19 +11,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-public abstract class AbstractDao<T extends BaseEntity<ID>, ID extends Serializable> implements CrudOperations<T, ID> { //-abstract +prot constr
+@Slf4j
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class BaseDao<T extends BaseEntity<ID>, ID extends Serializable> implements CrudOperations<T, ID> {
 
     public static final String NOT_FOUND_MESSAGE_TEMPLATE = "%s with presented id is not found";
 
     private Class<T> entityClass;
 
     @PersistenceContext
-    protected EntityManager entityManager; //final
+    protected EntityManager entityManager;
 
-    protected RuntimeException makeNotFoundException() {
+    protected RuntimeException createNotFoundException() {
         return new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE_TEMPLATE, entityClass.getSimpleName()));
     }
 
@@ -31,10 +35,10 @@ public abstract class AbstractDao<T extends BaseEntity<ID>, ID extends Serializa
     @Nullable
     @Override
     public T findById(@Nonnull ID id) {
-        Class<T> entity2 = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]; //TODO
+        //Class<T> entity2 = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]; //TODO
         T entity = entityManager.find(entityClass, id);
         if (entity == null)
-            throw this.makeNotFoundException();
+            throw this.createNotFoundException();
         return entity;
     }
 
@@ -60,6 +64,8 @@ public abstract class AbstractDao<T extends BaseEntity<ID>, ID extends Serializa
     public void delete(@Nonnull ID id) {
         try {
             entityManager.remove(this.findById(id));
-        } catch (EntityNotFoundException ignored) {} //logger
+        } catch (EntityNotFoundException exception) {
+            log.error("", exception);
+        }
     }
 }

@@ -1,12 +1,13 @@
 package ru.digitalhabits.homework3.web;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.StringUtils;
 import ru.digitalhabits.homework3.TestUtils;
-import ru.digitalhabits.homework3.dao.AbstractDao;
+import ru.digitalhabits.homework3.dao.BaseDao;
 import ru.digitalhabits.homework3.service.CrudService;
 
 import javax.persistence.EntityNotFoundException;
@@ -20,7 +21,9 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public abstract class AbstractRestControllerTest<T, S, R> {
+@Disabled
+class BaseRestControllerTest<T, S, R> {
+    protected static final int id = 1;
 
     private CrudService<T, S, R> crudService;
     private Class<T> requestClass;
@@ -40,7 +43,7 @@ public abstract class AbstractRestControllerTest<T, S, R> {
         this.shortResponseClass = shortResponseClass;
         this.fullResponseClass = fullResponseClass;
         this.apiPath = String.format(TestUtils.API_PATH_TEMPLATE, path);
-        this.notFoundMessage = String.format(AbstractDao.NOT_FOUND_MESSAGE_TEMPLATE, StringUtils.capitalize(path));
+        this.notFoundMessage = String.format(BaseDao.NOT_FOUND_MESSAGE_TEMPLATE, StringUtils.capitalize(path));
         this.exampleFiles = TestUtils.retrieveExampleFiles(path, "domain");
     }
 
@@ -59,7 +62,7 @@ public abstract class AbstractRestControllerTest<T, S, R> {
     }
 
     @Test
-    protected void getAll_runtimeException_internalServerError() throws Exception {
+    void getAll_runtimeException_internalServerError() throws Exception {
         String exceptionMessage = "RuntimeException";
 
         given(this.crudService.findAll())
@@ -72,7 +75,6 @@ public abstract class AbstractRestControllerTest<T, S, R> {
     }
 
     protected void get_existing_ok(String dtoFileName) throws Exception {
-        int id = 1;
         R dto = TestUtils.mapper.readValue(this.exampleFiles.get(dtoFileName), fullResponseClass);
 
         given(this.crudService.getById(id))
@@ -84,9 +86,7 @@ public abstract class AbstractRestControllerTest<T, S, R> {
     }
 
     @Test
-    protected void get_nonExisting_notFound() throws Exception {
-        int id = 1;
-
+    void get_nonExisting_notFound() throws Exception {
         given(this.crudService.getById(id))
                 .willThrow(new EntityNotFoundException(notFoundMessage));
         this.mockMvc.perform(get(apiPath + "/{id}", id))
@@ -96,7 +96,6 @@ public abstract class AbstractRestControllerTest<T, S, R> {
     }
 
     protected void post_valid_created(String dtoFileName) throws Exception {
-        int id = 1;
         T dto = TestUtils.mapper.readValue(this.exampleFiles.get(dtoFileName), requestClass);
 
         given(this.crudService.create(dto))
@@ -123,7 +122,6 @@ public abstract class AbstractRestControllerTest<T, S, R> {
     }
 
     protected void patch_existingAndValid_ok(String requestEntityFileName, String responseEntityFileName) throws Exception {
-        int id = 1;
         T requestEntity = TestUtils.mapper.readValue(this.exampleFiles.get(requestEntityFileName), requestClass);
         R responseEntity = TestUtils.mapper.readValue(this.exampleFiles.get(responseEntityFileName), fullResponseClass);
 
@@ -139,7 +137,6 @@ public abstract class AbstractRestControllerTest<T, S, R> {
     }
 
     protected void patch_nonValid_badRequest(String dtoFileName, int errorsQty) throws Exception {
-        int id = 1;
         T dto = TestUtils.mapper.readValue(this.exampleFiles.get(dtoFileName), requestClass);
 
         this.mockMvc.perform(patch(apiPath + "/{id}", id)
@@ -153,7 +150,6 @@ public abstract class AbstractRestControllerTest<T, S, R> {
     }
 
     protected void patch_nonExistingValid_notFound(String dtoFileName) throws Exception {
-        int id = 1;
         T dto = TestUtils.mapper.readValue(this.exampleFiles.get(dtoFileName), requestClass);
 
         given(this.crudService.update(id, dto))
@@ -168,7 +164,7 @@ public abstract class AbstractRestControllerTest<T, S, R> {
     }
 
     @Test
-    protected void deleteHttpMethod() throws Exception {
+    void deleteHttpMethod() throws Exception {
         this.mockMvc.perform(delete(apiPath + "/" + 1))
                 .andExpect(status().isNoContent());
     }

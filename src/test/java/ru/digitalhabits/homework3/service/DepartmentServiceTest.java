@@ -42,6 +42,7 @@ class DepartmentServiceTest {
     DepartmentService departmentService;
 
     static Map<String, File> exampleFiles;
+    static final int id = 1;
 
     @BeforeAll
     static void setup() {
@@ -75,7 +76,6 @@ class DepartmentServiceTest {
 
     @Test
     void findById_existing_ok() throws IOException {
-        int id = 1;
         Department department = TestUtils.mapper.readValue(exampleFiles.get("departmentEntity1.json"), Department.class);
         department.setId(id);
         DepartmentFullResponse departmentFullResponse = TestUtils.mapper.readValue(exampleFiles.get("departmentFullResponse.json"), DepartmentFullResponse.class);
@@ -87,8 +87,6 @@ class DepartmentServiceTest {
 
     @Test
     void findById_nonExisting_exception() {
-        int id = 1;
-
         when(this.departmentDao.findById(id))
                 .thenThrow(EntityNotFoundException.class);
         assertThrows(EntityNotFoundException.class, () -> this.departmentService.getById(id));
@@ -96,7 +94,6 @@ class DepartmentServiceTest {
 
     @Test
     void create() throws IOException {
-        int id = 1;
         DepartmentRequest departmentRequest = TestUtils.mapper.readValue(exampleFiles.get("departmentRequest.json"), DepartmentRequest.class);
         Department toCreateDepartment = TestUtils.mapper.readValue(exampleFiles.get("departmentEntity1.json"), Department.class);
 
@@ -112,7 +109,6 @@ class DepartmentServiceTest {
 
     @Test
     void update() throws IOException {
-        int id = 1;
         String name = "bar";
         DepartmentRequest departmentRequest = new DepartmentRequest().setName(name);
         Department department = TestUtils.mapper.readValue(exampleFiles.get("departmentEntity1.json"), Department.class);
@@ -129,14 +125,11 @@ class DepartmentServiceTest {
 
     @Test
     void delete() {
-        int id = 1;
-
         assertDoesNotThrow(() -> this.departmentService.delete(id));
     }
 
     @Test
     void close_existing_ok() throws IOException {
-        int id = 1; //field
         Person person = TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class);
         Department department = (Department) TestUtils.mapper.readValue(exampleFiles.get("departmentEntity1.json"), Department.class).setPersons(List.of(person)).setId(id);
         Department departmentClosed = (Department) TestUtils.mapper.readValue(exampleFiles.get("departmentEntity1.json"), Department.class).setPersons(List.of()).setClosed(true).setId(id);
@@ -153,8 +146,6 @@ class DepartmentServiceTest {
 
     @Test
     void close_nonExisting_exception(){
-        int id = 1;
-
         when(this.departmentDao.findById(id))
                 .thenThrow(EntityNotFoundException.class);
         assertThrows(EntityNotFoundException.class, () -> this.departmentService.close(id));

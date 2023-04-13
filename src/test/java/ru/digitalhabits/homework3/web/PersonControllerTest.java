@@ -12,7 +12,7 @@ import ru.digitalhabits.homework3.service.PersonService;
 
 @WebMvcTest(controllers = PersonController.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PersonControllerTest extends AbstractRestControllerTest<PersonRequest, PersonShortResponse, PersonFullResponse> {
+class PersonControllerTest extends BaseRestControllerTest<PersonRequest, PersonShortResponse, PersonFullResponse> {
 
     @MockBean
     private PersonService personService;

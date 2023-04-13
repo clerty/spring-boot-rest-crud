@@ -64,7 +64,7 @@ public class DepartmentServiceImpl
 
     @Override
     @Transactional
-    public void close(int id) { //query
+    public void close(int id) {
         Department department = departmentDao.findById(id);
         for (Person person : department.getPersons()) {
             person.setDepartment(null);

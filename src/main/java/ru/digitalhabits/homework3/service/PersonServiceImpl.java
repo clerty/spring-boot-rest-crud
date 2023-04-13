@@ -1,6 +1,7 @@
 package ru.digitalhabits.homework3.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.digitalhabits.homework3.dao.DepartmentDao;
@@ -16,6 +17,7 @@ import javax.annotation.Nonnull;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PersonServiceImpl
@@ -86,6 +88,8 @@ public class PersonServiceImpl
             Person person = personDao.findByIdAndDepartment(personId, department);
             person.setDepartment(null);
             personDao.update(person);
-        } catch (EntityNotFoundException ignored) {}
+        } catch (EntityNotFoundException exception) {
+            log.error("", exception);
+        }
     }
 }

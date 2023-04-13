@@ -13,7 +13,7 @@ import java.io.IOException;
 @DataJpaTest
 @Import(DepartmentDao.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class DepartmentDaoTest extends AbstractDaoTest<Department, Integer> {
+class DepartmentDaoTest extends BaseDaoTest<Department, Integer> {
 
     @Autowired
     private DepartmentDao departmentDao;

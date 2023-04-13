@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 )
 public interface PersonMapper {
 
-    void personRequestToPerson(PersonRequest personRequest, Person person); //one parameter
+    void personRequestToPerson(PersonRequest personRequest, @MappingTarget Person person);
 
     @Mapping(target = "fullName", source = "person", qualifiedByName = "getFullName")
     PersonShortResponse personToPersonShortResponse(Person person);

@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 @MappedSuperclass
 @Accessors(chain = true)
-public class BaseEntity<ID extends Serializable> { //override eq hash
+public class BaseEntity<ID extends Serializable> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "default_gen")

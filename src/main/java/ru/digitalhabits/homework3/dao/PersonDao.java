@@ -6,11 +6,10 @@ import ru.digitalhabits.homework3.domain.Person;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityNotFoundException;
 
 @Component
 public class PersonDao
-        extends AbstractDao<Person, Integer> {
+        extends BaseDao<Person, Integer> {
 
     @PostConstruct
     private void init() {
@@ -24,6 +23,6 @@ public class PersonDao
                 .getResultList()
                 .stream()
                 .findFirst()
-                .orElseThrow(this::makeNotFoundException);
+                .orElseThrow(this::createNotFoundException);
     }
 }

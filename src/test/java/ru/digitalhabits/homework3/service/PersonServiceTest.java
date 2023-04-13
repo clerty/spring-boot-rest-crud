@@ -42,6 +42,8 @@ class PersonServiceTest {
     PersonService personService;
 
     static Map<String, File> exampleFiles;
+    static final int personId = 1;
+    static final int departmentId = 1;
 
     @BeforeAll
     static void setup() {
@@ -75,45 +77,39 @@ class PersonServiceTest {
 
     @Test
     void findById_existing_ok() throws IOException {
-        int id = 1;
         int age = 20;
         Person person = TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class);
-        person.setAge(age).setId(id);
+        person.setAge(age).setId(personId);
         PersonFullResponse personFullResponse = TestUtils.mapper.readValue(exampleFiles.get("personFullResponse.json"), PersonFullResponse.class);
 
-        when(this.personDao.findById(id))
+        when(this.personDao.findById(personId))
                 .thenReturn(person);
-        assertEquals(personFullResponse, this.personService.getById(id));
+        assertEquals(personFullResponse, this.personService.getById(personId));
     }
 
     @Test
     void findById_nonExisting_exception() {
-        int id = 1;
-
-        when(this.personDao.findById(id))
+        when(this.personDao.findById(personId))
                 .thenThrow(EntityNotFoundException.class);
-        assertThrows(EntityNotFoundException.class, () -> this.personService.getById(id));
+        assertThrows(EntityNotFoundException.class, () -> this.personService.getById(personId));
     }
 
     @Test
     void create() throws IOException {
-        int id = 1;
         PersonRequest personRequest = TestUtils.mapper.readValue(exampleFiles.get("personRequest.json"), PersonRequest.class);
         Person toCreatePerson = TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class);
 
         when(this.personDao.create(toCreatePerson))
                 .then(invocation -> {
                     Person person = invocation.getArgument(0);
-                    person.setId(id);
-                    return id;
+                    person.setId(personId);
+                    return personId;
                 });
-        assertEquals(id, this.personService.create(personRequest));
+        assertEquals(personId, this.personService.create(personRequest));
     }
 
     @Test
     void addPersonToDepartment_existing_ok() throws IOException {
-        int personId = 1;
-        int departmentId = 1;
         Department department = TestUtils.mapper.readValue(exampleFiles.get("departmentEntity1.json"), Department.class);
         Person person = TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class).setDepartment(department);
         Person personToAdd = TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class);
@@ -130,8 +126,6 @@ class PersonServiceTest {
 
     @Test
     void addPersonToDepartment_nonExistingPerson_exception() throws IOException {
-        int personId = 1;
-        int departmentId = 1;
         Department department = TestUtils.mapper.readValue(exampleFiles.get("departmentEntity1.json"), Department.class);
 
         when(this.departmentDao.findById(departmentId))
@@ -144,9 +138,6 @@ class PersonServiceTest {
 
     @Test
     void addPersonToDepartment_nonExistingDepartment_exception() {
-        int personId = 1;
-        int departmentId = 1;
-
         when(this.departmentDao.findById(departmentId))
                 .thenThrow(EntityNotFoundException.class);
 
@@ -155,8 +146,6 @@ class PersonServiceTest {
 
     @Test
     void addPersonToDepartment_closedDepartment_exception() throws IOException {
-        int personId = 1;
-        int departmentId = 1;
         Department department = TestUtils.mapper.readValue(exampleFiles.get("departmentEntity1.json"), Department.class).setClosed(true);
 
         when(this.departmentDao.findById(departmentId))
@@ -166,32 +155,27 @@ class PersonServiceTest {
 
     @Test
     void update() throws IOException {
-        int id = 1;
         int age = 20;
         PersonRequest personRequest = new PersonRequest().setAge(age);
         Person person = TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class);
         Person toUpdatePerson = TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class).setAge(age);
-        Person updatedPerson = (Person) TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class).setAge(age).setId(id);
+        Person updatedPerson = (Person) TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class).setAge(age).setId(personId);
         PersonFullResponse personFullResponse = TestUtils.mapper.readValue(exampleFiles.get("personFullResponse.json"), PersonFullResponse.class);
 
-        when(this.personDao.findById(id))
+        when(this.personDao.findById(personId))
                 .thenReturn(person);
         when(this.personDao.update(toUpdatePerson))
                 .thenReturn(updatedPerson);
-        assertEquals(personFullResponse, this.personService.update(id, personRequest));
+        assertEquals(personFullResponse, this.personService.update(personId, personRequest));
     }
 
     @Test
     void delete() {
-        int id = 1;
-
-        assertDoesNotThrow(() -> this.personService.delete(id));
+        assertDoesNotThrow(() -> this.personService.delete(personId));
     }
 
     @Test
     void removePersonFromDepartment_existing_ok() throws IOException {
-        int personId = 1;
-        int departmentId = 1;
         Person person = TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class);
         Department department = TestUtils.mapper.readValue(exampleFiles.get("departmentEntity1.json"), Department.class);
         Person personToRemove = TestUtils.mapper.readValue(exampleFiles.get("personEntity1.json"), Person.class).setDepartment(department);
@@ -208,8 +192,6 @@ class PersonServiceTest {
 
     @Test
     void removePersonFromDepartment_nonExistingPerson_ok() throws IOException {
-        int personId = 1;
-        int departmentId = 1;
         Department department = TestUtils.mapper.readValue(exampleFiles.get("departmentEntity1.json"), Department.class);
 
         when(this.departmentDao.findById(departmentId))
@@ -222,9 +204,6 @@ class PersonServiceTest {
 
     @Test
     void removePersonFromDepartment_nonExistingDepartment_exception() {
-        int personId = 1;
-        int departmentId = 1;
-
         when(this.departmentDao.findById(departmentId))
                 .thenThrow(EntityNotFoundException.class);
 

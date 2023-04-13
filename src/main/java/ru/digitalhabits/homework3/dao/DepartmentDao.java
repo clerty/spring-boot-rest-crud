@@ -7,7 +7,7 @@ import javax.annotation.PostConstruct;
 
 @Component
 public class DepartmentDao
-        extends AbstractDao<Department, Integer> {
+        extends BaseDao<Department, Integer> {
 
     @PostConstruct
     private void init() {

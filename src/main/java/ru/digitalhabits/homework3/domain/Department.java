@@ -22,7 +22,6 @@ public class Department extends BaseEntity<Integer> {
 
     private boolean closed;
 
-    //@JacksonBackReference
     @Fetch(FetchMode.JOIN)
     @OneToMany(mappedBy = "department", fetch = FetchType.EAGER)
     private List<Person> persons;

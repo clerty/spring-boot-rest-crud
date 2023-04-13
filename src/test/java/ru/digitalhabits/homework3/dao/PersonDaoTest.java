@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DataJpaTest
 @Import(PersonDao.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PersonDaoTest extends AbstractDaoTest<Person, Integer> {
+class PersonDaoTest extends BaseDaoTest<Person, Integer> {
 
     @Autowired
     private PersonDao personDao;

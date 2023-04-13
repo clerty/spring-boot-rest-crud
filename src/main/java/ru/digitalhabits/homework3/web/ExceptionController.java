@@ -1,7 +1,7 @@
 package ru.digitalhabits.homework3.web;
 
 import io.swagger.v3.oas.annotations.Hidden;
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
@@ -19,13 +19,11 @@ import java.util.List;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static org.slf4j.LoggerFactory.getLogger;
 
+@Slf4j
 @Hidden
 @RestControllerAdvice(annotations = RestController.class)
 public class ExceptionController {
-    private static final Logger logger = getLogger(ExceptionController.class);
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ValidationErrorResponse badRequest(MethodArgumentNotValidException exception) {
@@ -48,7 +46,7 @@ public class ExceptionController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
     public ErrorResponse error(RuntimeException exception) {
-        logger.error("", exception);
+        log.error("", exception);
         return new ErrorResponse(exception.getMessage());
     }
 
