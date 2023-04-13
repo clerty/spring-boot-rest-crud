@@ -1,0 +1,82 @@
+plugins {
+    id "java"
+    id "idea"
+    id "jacoco"
+    id "org.springframework.boot" version "2.4.5"
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
+    id "com.gorylenko.gradle-git-properties" version "2.2.2"
+}
+
+ext {
+    guavaVersion = "30.1-jre"
+    openApiVersion = "1.5.9"
+    fingBugsVersion = "3.0.2"
+    mapStructVersion = "1.5.3.Final"
+    lomMapBindVersion = "0.2.0"
+}
+
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+
+    implementation "org.flywaydb:flyway-core"
+    implementation "org.postgresql:postgresql"
+    implementation "org.mapstruct:mapstruct:$mapStructVersion"
+
+    implementation "org.apache.commons:commons-lang3"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "org.springdoc:springdoc-openapi-webmvc-core:$openApiVersion"
+    implementation "org.springdoc:springdoc-openapi-ui:$openApiVersion"
+
+    compileOnly "com.google.code.findbugs:jsr305:$fingBugsVersion"
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:$lomMapBindVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
+
+    testImplementation "com.h2database:h2"
+    testImplementation "com.google.code.gson:gson"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        xml.destination file("${buildDir}/reports/jacoco/report.xml")
+        html.enabled false
+        csv.enabled false
+    }
+
+    afterEvaluate {
+        classDirectories.from = files(classDirectories.files.collect {
+            fileTree(
+                    dir: it,
+                    exclude: [ 'ru/digitalhabits/homework3/HomeworkApplication.class' ])
+        })
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootJar {
+    archiveFileName = "${project.name}.jar"
+}

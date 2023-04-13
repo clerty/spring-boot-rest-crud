@@ -1,0 +1,981 @@
+{
+	"info": {
+		"_postman_id": "6843bdb6-8e71-43d5-b8d8-9da1cafbd66f",
+		"name": "homework3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Department REST API operations",
+			"item": [
+				{
+					"name": "[Create new Department] /api/v1/departments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('get departmentId from location header', () => {",
+									"    pm.response.to.have.status(201)",
+									"",
+									"    const request = JSON.parse(pm.request.body)",
+									"    pm.collectionVariables.set(\"departmentName\", request.name)",
+									"",
+									"    const location = pm.response.headers.get(\"Location\")",
+									"    pm.expect(location).to.not.empty;",
+									"    const departmentId = location.split(\"/\").pop()",
+									"    pm.collectionVariables.set(\"departmentId\", Number(departmentId))",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{$randomCompanyName}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Get Department by ID] /api/v1/departments/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
+									"    ",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.id).to.eq(pm.collectionVariables.get('departmentId'))",
+									"    pm.expect(response.name).to.eq(pm.collectionVariables.get('departmentName'))",
+									"    pm.expect(response.closed).to.be.false",
+									"    pm.expect(response.persons).to.be.empty",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{departmentId}}",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Get department by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "[Get all Departments] /api/v1/departments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
+									"    ",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.be.an(\"array\")",
+									"",
+									"    const departmentId = pm.collectionVariables.get('departmentId')",
+									"    const item = _.find(response, { \"id\": departmentId })",
+									"    pm.expect(item).to.be.not.undefined",
+									"    pm.expect(item.name).to.eq(pm.collectionVariables.get('departmentName'))",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Create new Person] /api/v1/persons",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('get personId from location header', () => {",
+									"    pm.response.to.have.status(201)",
+									"    ",
+									"    const request = JSON.parse(pm.request.body)",
+									"    pm.collectionVariables.set(\"firstName\", request.firstName)",
+									"    pm.collectionVariables.set(\"middleName\", request.middleName)",
+									"    pm.collectionVariables.set(\"lastName\", request.lastName)",
+									"    pm.collectionVariables.set(\"age\", request.age)",
+									"",
+									"    const location = pm.response.headers.get(\"Location\")",
+									"    pm.expect(location).to.not.empty;",
+									"    var personId = location.split(\"/\").pop()",
+									"    pm.collectionVariables.set(\"personId\", Number(personId))",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{$randomFirstName}}\",\n    \"lastName\": \"{{$randomLastName}}\",\n    \"middleName\": \"{{$randomFirstName}}\",\n    \"age\": 31\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/persons",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"persons"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Add Person to Department] /api/v1/departments/:departmentId/:personId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(204)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments/:departmentId/:personId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments",
+								":departmentId",
+								":personId"
+							],
+							"variable": [
+								{
+									"key": "departmentId",
+									"value": "{{departmentId}}",
+									"description": "(Required) "
+								},
+								{
+									"key": "personId",
+									"value": "{{personId}}",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Get Department by ID after add person] /api/v1/departments/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
+									"    ",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.id).to.eq(pm.collectionVariables.get('departmentId'))",
+									"    pm.expect(response.name).to.eq(pm.collectionVariables.get('departmentName'))",
+									"    pm.expect(response.closed).to.be.false",
+									"    pm.expect(response.persons).to.be.an(\"array\")",
+									"    pm.expect(response.persons).to.be.not.empty",
+									"",
+									"    const personId = pm.collectionVariables.get('personId')",
+									"    const item = _.find(response.persons, { \"id\": personId })",
+									"    pm.expect(item).to.be.not.undefined",
+									"",
+									"    const fullName = pm.collectionVariables.get('firstName') + \" \" + ",
+									"        pm.collectionVariables.get('middleName') + \" \" + ",
+									"        pm.collectionVariables.get('lastName')",
+									"    pm.expect(item.fullName).to.eq(fullName)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{departmentId}}",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Get department by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "[Get Person by ID after add to department] /api/v1/persons/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
+									"    ",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.id).to.eq(pm.collectionVariables.get('personId'))",
+									"    const fullName = pm.collectionVariables.get('firstName') + \" \" + ",
+									"        pm.collectionVariables.get('middleName') + \" \" + ",
+									"        pm.collectionVariables.get('lastName')",
+									"    pm.expect(response.fullName).to.eq(fullName)",
+									"    pm.expect(response.age).to.eq(pm.collectionVariables.get('age'))",
+									"    pm.expect(response.department).to.be.not.null",
+									"    pm.expect(response.department.id).to.be.eq(pm.collectionVariables.get('departmentId'))",
+									"    pm.expect(response.department.name).to.be.eq(pm.collectionVariables.get('departmentName'))",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/persons/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"persons",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{personId}}",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Remove Person from Department] /api/v1/departments/:departmentId/:personId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(204)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments/:departmentId/:personId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments",
+								":departmentId",
+								":personId"
+							],
+							"variable": [
+								{
+									"key": "departmentId",
+									"value": "{{departmentId}}",
+									"description": "(Required) "
+								},
+								{
+									"key": "personId",
+									"value": "{{personId}}",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Get Department by ID after remove person] /api/v1/departments/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
+									"    ",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.id).to.eq(pm.collectionVariables.get('departmentId'))",
+									"    pm.expect(response.name).to.eq(pm.collectionVariables.get('departmentName'))",
+									"    pm.expect(response.closed).to.be.false",
+									"    pm.expect(response.persons).to.be.an(\"array\")",
+									"    pm.expect(response.persons).to.be.empty",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{departmentId}}",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Get department by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "[Update Department] /api/v1/departments/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
+									"    ",
+									"    const request = JSON.parse(pm.request.body)",
+									"    pm.collectionVariables.set(\"departmentName\", request.name)",
+									"    ",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.id).to.eq(pm.collectionVariables.get('departmentId'))",
+									"    pm.expect(response.name).to.eq(request.name)",
+									"    pm.expect(response.closed).to.be.false",
+									"",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{$randomProductName}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{departmentId}}",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Close Department] /api/v1/departments/:id/close",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(204)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments/:id/close",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments",
+								":id",
+								"close"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{departmentId}}",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Add Person to Department after it's closed] /api/v1/departments/:departmentId/:personId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(409)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments/:departmentId/:personId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments",
+								":departmentId",
+								":personId"
+							],
+							"variable": [
+								{
+									"key": "departmentId",
+									"value": "{{departmentId}}",
+									"description": "(Required) "
+								},
+								{
+									"key": "personId",
+									"value": "{{personId}}",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Delete Department] /api/v1/departments/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(204)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/departments/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"departments",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{departmentId}}",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Person REST API operations",
+			"item": [
+				{
+					"name": "[Create new Person] /api/v1/persons",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('get personId from location header', () => {",
+									"    pm.response.to.have.status(201)",
+									"",
+									"    const request = JSON.parse(pm.request.body)",
+									"    pm.collectionVariables.set(\"firstName\", request.firstName)",
+									"    pm.collectionVariables.set(\"middleName\", request.middleName)",
+									"    pm.collectionVariables.set(\"lastName\", request.lastName)",
+									"    pm.collectionVariables.set(\"age\", request.age)",
+									"",
+									"    const location = pm.response.headers.get(\"Location\")",
+									"    pm.expect(location).to.not.empty;",
+									"    var personId = location.split(\"/\").pop()",
+									"    pm.collectionVariables.set(\"personId\", Number(personId))",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{$randomFirstName}}\",\n    \"middleName\": \"{{$randomFirstName}}\",\n    \"lastName\": \"{{$randomLastName}}\",\n    \"age\": 31\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/persons",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"persons"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Get Person by ID] /api/v1/persons/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
+									"    ",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.id).to.eq(pm.collectionVariables.get('personId'))",
+									"    const fullName = pm.collectionVariables.get('firstName') + \" \" + ",
+									"        pm.collectionVariables.get('middleName') + \" \" + pm.collectionVariables.get('lastName')",
+									"    pm.expect(response.fullName).to.eq(fullName)",
+									"    pm.expect(response.age).to.eq(pm.collectionVariables.get('age'))",
+									"    pm.expect(response.department).to.be.null",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/persons/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"persons",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{personId}}",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Get all Persons] /api/v1/persons",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
+									"",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.be.an(\"array\")",
+									"",
+									"    const personId = pm.collectionVariables.get('personId')",
+									"    const item = _.find(response, { \"id\": personId })",
+									"    pm.expect(item).to.be.not.undefined",
+									"",
+									"    const fullName = pm.collectionVariables.get('firstName') + \" \" + ",
+									"    pm.collectionVariables.get('middleName') + \" \" + pm.collectionVariables.get('lastName')",
+									"    pm.expect(item.fullName).to.eq(fullName)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/persons",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"persons"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Update Person] /api/v1/persons/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(200)",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
+									"    ",
+									"    const request = JSON.parse(pm.request.body)",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.id).to.eq(pm.collectionVariables.get('personId'))",
+									"    const fullName = request.firstName + \" \" + pm.collectionVariables.get('middleName') + \" \" + request.lastName",
+									"    pm.expect(response.fullName).to.eq(fullName)",
+									"    pm.expect(response.age).to.eq(pm.collectionVariables.get('age'))",
+									"    pm.expect(response.department).to.be.null",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"{{$randomFirstName}}\",\n    \"lastName\": \"{{$randomLastName}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/persons/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"persons",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{personId}}",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "[Delete Person] /api/v1/persons/:id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('check success', () => {",
+									"    pm.response.to.have.status(204)",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/persons/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"persons",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{personId}}",
+									"description": "(Required) "
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "[Health Check] /manage/health",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('check success', () => {",
+							"    pm.response.to.have.status(200)",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/manage/health",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"manage",
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "departmentId",
+			"value": ""
+		},
+		{
+			"key": "departmentName",
+			"value": ""
+		},
+		{
+			"key": "personId",
+			"value": ""
+		},
+		{
+			"key": "firstName",
+			"value": ""
+		},
+		{
+			"key": "middleName",
+			"value": ""
+		},
+		{
+			"key": "lastName",
+			"value": ""
+		},
+		{
+			"key": "age",
+			"value": ""
+		}
+	]
+}

@@ -1,0 +1,8 @@
+{
+  "firstName": "foo",
+  "lastName": "bar",
+  "department": {
+    "id": 1,
+    "name": "foo"
+  }
+}

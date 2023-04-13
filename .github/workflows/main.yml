@@ -1,0 +1,49 @@
+name: Build project
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Build project
+        uses: eskatos/gradle-command-action@v1
+        with:
+          dependencies-cache-enabled: true
+          arguments: clean build jacocoTestReport
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: 993e99be-0b11-4ddb-814f-eb344eb89ba3
+          file: build/reports/jacoco/report.xml
+
+#      - name: Setup Fly CLI
+#        uses: superfly/flyctl-actions/setup-flyctl@master
+#
+#      - name: Deploy to Fly
+#        run: flyctl deploy --remote-only
+#        env:
+#          FLY_API_TOKEN: HznsULssV1Ndq-2DtfncGqi0x1Eu9ApHtJLk0icSJ_4
+#
+#      - name: Run API Tests
+#        id: run-newman
+#        uses: anthonyvscode/newman-action@v1
+#        with:
+#          collection: postman/homework3.postman_collection.json
+#          environment: postman/[flyio] digital-habits.postman_environment.json
+#          delayRequest: 50
+#          reporters: cli
